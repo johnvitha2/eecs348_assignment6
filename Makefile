@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
-TARGET = program
+TARGET = Assignment6
 SRCS = Assignment6.cpp
 OBJS = $(SRCS:.cpp=.o)
 all: $(TARGET)
