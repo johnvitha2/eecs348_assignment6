@@ -17,7 +17,7 @@
 using namespace std;
 
 /*
-* Initialize a struct containing the row and column of the best candidate and and a vector of candidates.
+* Initialize a struct containing the row and column of the best cell and its candidates.
 */
 struct Cell {
     int row; // Initialize row
@@ -51,7 +51,11 @@ vector<vector<int>> read_file(ifstream &file){
 void print_board(const vector<vector<int>>& sudoku_board){
     for(int i = 0; i < 9; i++){ // Loop through each row
         for(int j = 0; j < 9; j++){ // Loop through each column
-            cout << sudoku_board[i][j] << " "; // Print each cell in row i followed by a space
+            if(sudoku_board[i][j] == 0){
+                cout << "_" << " "; // Change 0 back to _ for printing unsolved boards
+            } else {
+                cout << sudoku_board[i][j] << " "; // Print each cell in row i followed by a space
+            }
         }
         cout << endl; // Next line
     }
@@ -122,9 +126,6 @@ Cell find_next(const vector<vector<int>>& board){
         for(int j = 0; j < 9; j++){ // Loop through each column
             if(board[i][j]  == 0){ // If cell is empty
                 vector<int> cands = get_candidates(row_vals(board, i), col_vals(board, j), three_by_three_vals(board, i, j)); // Get next candidate
-                if(cands.empty()){ // If there are no candidates
-                    return Cell(); // Dead end, return
-                }
                 if((best.row == -1) || cands.size() < best.cands.size()){ // If this space is more constrained
                     best.row = i; // Update best row
                     best.col = j; // Update best column
@@ -169,10 +170,13 @@ int main(){
             continue; // Try reading next file
         }
         vector<vector<int>> sudoku_board = read_file(file); // Read file into vector of vectors board
+        cout << filename << ": " << endl; // Print the filename
+        print_board(sudoku_board); // Print the unsolved board
+        cout << endl; // Next line
         vector<vector<vector<int>>> solutions; // Vector of boards
         solve(sudoku_board, solutions); // Recursively call solve and store solutions
         if(solutions.empty()){ // If no solutions found
-            cout << "No solution found." << endl; // Tell the user
+            cout << "No solution found." << endl << endl; // Tell the user
         } else{ // If solutions found
             for(size_t j = 0; j < solutions.size(); j++){ // Loop through solutions vector
                 print_board(solutions[int(j)]); // Output solution
